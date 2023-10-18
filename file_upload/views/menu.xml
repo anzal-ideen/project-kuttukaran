@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!--    <record id="amazon_dashboard_action" model="ir.actions.client">-->
+<!--        <field name="name">Amazon S3 Dashboard</field>-->
+<!--        <field name="tag">amazon_dashboard</field>-->
+<!--        <field name="target">current</field>-->
+<!--        <field name="binding_model_id" ref="model_file_upload" />-->
+<!--    </record>-->
+<!--    <menuitem id="amazon_s3_connector_menu_root"-->
+<!--              name="Amazon Dashboard" parent="root_file_upload"-->
+<!--              action="amazon_dashboard_action"/>-->
+</odoo>

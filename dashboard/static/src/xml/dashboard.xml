@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<template id="template" xml:space="preserve">
+    <t t-name="owl.OwlSalesDashboard" owl="1">
+        <h1>Customm</h1>
+<!--        <div class="oh_dashboards">-->
+<!--            <div class="container-fluid o_pos_dashboard">-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+    </t>
+
+</template>

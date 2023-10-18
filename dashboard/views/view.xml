@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+<!--############################### Product Requests ###############################        -->
+        <record model="ir.ui.view" id="view_pr_tree_all">
+            <field name="name">Product Request Details</field>
+            <field name="model">product.request</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="PR Tree">
+                    <field name="name"/>
+                    <field name="requested_date"/>
+                    <field name="expense_type"/>
+                    <field name="status"
+                           decoration-success="status == 'accepted'"
+                           decoration-info="status == 'draft'"
+                           decoration-danger="status == 'Reject'"
+                           decoration-warning="status == 'requested'"
+                           widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_product_requests_all" model="ir.actions.act_window">
+            <field name="name">Purchase Requests All</field>
+            <field name="res_model">product.request</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dashboard.view_pr_tree_all" />
+            <field name="domain">[('status','=','requested')]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                </p>
+            </field>
+        </record>
+
+
+        <record id="action_product_requests" model="ir.actions.act_window">
+            <field name="name">Purchase Requests</field>
+            <field name="res_model">product.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="dashboard.view_pr_tree_all"/>
+        </record>
+<!--#######################################################################################################-->
+
+<!--  ##########################  Vendor Requests #########################      -->
+<!--        <record id="action_product_requests_all" model="ir.actions.act_window">-->
+<!--            <field name="name">Purchase Requests All</field>-->
+<!--            <field name="res_model">product.request</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="domain">[('status','=','requested')]</field>-->
+<!--            <field name="help" type="html">-->
+<!--                <p class="o_view_nocontent_smiling_face">-->
+<!--                </p>-->
+<!--            </field>-->
+<!--        </record>-->
+
+
+<!--        <record id="action_vendor_requests" model="ir.actions.act_window">-->
+<!--            <field name="name">Vendor Requests</field>-->
+<!--            <field name="res_model">product.request</field>-->
+<!--            <field name="view_mode">tree</field>-->
+<!--            <field name="view_id" ref="product_purchase.view_product_purchase_form"/>-->
+<!--        </record>-->
+
+
+
+<!-- ################################ -->
+
+        <record id="dashboard_form_view" model="ir.ui.view">
+            <field name="name">Dashboard Form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <board style="1">
+                        <column>
+                            <action string="Product Requests" name="%(dashboard.action_product_requests_all)d"/>
+                        </column>
+
+<!--                        <column>-->
+<!--                            <action string="Product Requests" name="%(product_purchase.action_product_requests)d"/>-->
+<!--                        </column>-->
+
+<!--                        <column>-->
+<!--                            <action string="Product Requests" name="%(product_purchase.action_product_requests)d"/>-->
+
+<!--                        </column>-->
+
+
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_dashboard">
+            <field name="name">Dashboard</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="dashboard_form_view"/>
+        </record>
+
+
+        <menuitem id="root_custom_dashboard" name="Dashboard"
+                  action="action_view_dashboard"/>
+
+        <!--        <menuitem id="menu_custom" name="Purchase Orders" parent="root_custom_dashboard"-->
+        <!--                  action="action_view_vendors_po"-->
+        <!--                  sequence="10"/>-->
+
+
+    </data>
+</odoo>
