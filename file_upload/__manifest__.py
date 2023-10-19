@@ -11,6 +11,7 @@
  'depends': ['sale', 'purchase', 'base','stock','mail'],
  'license': 'AGPL-3',
  'data': [
+     'data/sequence.xml',
      'security/ir.model.access.csv',
      'views/view.xml',
      'views/menu.xml',

@@ -2,6 +2,18 @@
 <odoo>
     <data>
 
+        <record id="file_view_search" model="ir.ui.view">
+            <field name="model">file.upload</field>
+            <field name="arch" type="xml">
+                <search string="File Upload">
+                    <field name="description"/>
+                    <field name="name"/>
+
+                    <!--                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>-->
+                </search>
+            </field>
+        </record>
+
 
         <record id="view_file_upload_tree" model="ir.ui.view">
             <field name="name">File Upload</field>
@@ -9,8 +21,8 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree>
-
-                    <field name="file_name"/>
+                    <field name="date"/>
+                    <field name="name"/>
                     <field name="description"/>
 
                 </tree>
@@ -40,18 +52,25 @@
 
                         <group>
                             <group col="2">
-                                <field name="file_name"/>
+                                <field name="name"/>
                                 <field name="description"/>
+                                <field name="url" readonly="1" widget="url" options="{'mode': 'widget'}"
+                                       attrs="{'invisible':[('uploaded','=',False)]}"/>
+                                <field name="uploaded" invisible="1"/>
 
 
                             </group>
                             <group col="2">
-                                <field name="file" widget="binary" filename="file_name"/>
+                                <field name="date"/>
+                                <field name="user_id" readonly="1"/>
+                                <button string="Upload File" type="object" name="action_upload"
+                                        class="btn btn-primary" attrs="{'invisible':[('uploaded','=',True)]}"/>
 
                             </group>
                             <footer>
-                                <button string="Upload To S3" type="object" name="action_amazon_upload" class="btn btn-primary"/>
-                                <button string="Upload File" type="object" name="action_upload" class="btn btn-primary"/>
+                                <!--                                <button string="Upload To S3" type="object" name="action_amazon_upload"-->
+                                <!--                                        class="btn btn-primary"/>-->
+
 
                             </footer>
                         </group>
@@ -84,6 +103,44 @@
         <menuitem id="menu_file_upload" name="File Upload" parent="root_file_upload"
                   action="action_file_upload"
                   sequence="10"/>
+
+
+        <!-- WIZARD UPLOAD       -->
+
+        <record id="upload_file_action_view" model="ir.ui.view">
+            <field name="name">File Upload</field>
+            <field name="model">file.upload.wizard</field>
+            <field name="arch" type="xml">
+
+
+                <form string="File Upload">
+
+                    <group>
+
+                        <group col="2">
+                            <field name="upload_id" invisible="1"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file" widget="binary" filename="file_name"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="confirm_upload"
+                                string="Confirm" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+
+        <record id="upload_file_action" model="ir.actions.act_window">
+            <field name="name">Upload File</field>
+            <field name="res_model">file.upload.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="upload_file_action_view"/>
+            <field name="target">new</field>
+        </record>
 
 
     </data>
