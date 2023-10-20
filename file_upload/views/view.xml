@@ -98,7 +98,7 @@
             </field>
         </record>
 
-        <menuitem id="root_file_upload" name="File Uploads"/>
+        <menuitem id="root_file_upload" name="File Uploads" web_icon="file_upload,static/icons/new.png"  />
 
         <menuitem id="menu_file_upload" name="File Upload" parent="root_file_upload"
                   action="action_file_upload"

@@ -37,11 +37,13 @@
         'web.assets_backend': [
             'amazon_s3_connector/static/src/js/amazon.js',
             'amazon_s3_connector/static/src/scss/amazon.scss'
-        ]
+        ],
+        'web.assets_qweb': [
+            'amazon_s3_connector/static/src/xml/amazon_dashboard_template.xml',
+        ],
     },
 
-
-    'qweb':[
+    'qweb': [
         'amazon_s3_connector/static/src/xml/amazon_dashboard_template.xml',
 
     ],

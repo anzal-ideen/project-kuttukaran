@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<templates id="template" xml:space="preserve">
+    <t t-name="Dashboard_custom">
+
+        <div class="vh-100 overflow-auto bg-muted">
+            <div class="row m-3">
+                <div class="col-lg-7">
+                    <div class="row">
+                         <div class="col m-0 p-0">
+                            <div class="shadow-sm border m-2 p-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h1 class="text-primary fw-bold">Custom Dashboard</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                     <div class="col-lg-3 m-0 p-0">
+                        <div class="shadow-sm border m-2 p-4 bg-white text-center">
+                        <div class="h1 fw-bold text-dark" style="font-size: 48px">2</div>
+                        <div class="h3 text-muted">Product Requests</div>
+                            <div class="h3 mt-5">
+<!--                                <span class="text-success">-->
+<!--                                    <span class="fa fa-arrow-up"/>-->
+<!--                                        <span>10%</span>-->
+<!--                                    <span> since last period</span>-->
+<!--                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-lg-3 m-0 p-0">
+                        <div class="shadow-sm border m-2 p-4 bg-white text-center">
+                        <div class="h1 fw-bold text-dark" style="font-size: 48px">10</div>
+                        <div class="h3 text-muted">Vendor Requests</div>
+                            <div class="h3 mt-5">
+<!--                                <span class="text-success">-->
+<!--                                    <span class="fa fa-arrow-up"/>-->
+<!--                                        <span>10%</span>-->
+<!--                                    <span> since last period</span>-->
+<!--                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="col-lg-3 m-0 p-0">
+                        <div class="shadow-sm border m-2 p-4 bg-white text-center">
+                        <div class="h1 fw-bold text-dark" style="font-size: 48px">10</div>
+                        <div class="h3 text-muted">Product Contracts</div>
+                            <div class="h3 mt-5">
+<!--                                <span class="text-success">-->
+<!--                                    <span class="fa fa-arrow-up"/>-->
+<!--                                        <span>10%</span>-->
+<!--                                    <span> since last period</span>-->
+<!--                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-3 m-0 p-0">
+                        <div class="shadow-sm border m-2 p-4 bg-white text-center">
+                        <div class="h1 fw-bold text-dark" style="font-size: 48px">10</div>
+                        <div class="h3 text-muted">Purchase Orders</div>
+                            <div class="h3 mt-5">
+<!--                                <span class="text-success">-->
+<!--                                    <span class="fa fa-arrow-up"/>-->
+<!--                                        <span>10%</span>-->
+<!--                                    <span> since last period</span>-->
+<!--                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+                </div>
+            <div class="col-lg-5">
+                 <div class="row">
+                        <div class="col m-0 p-0">
+                            <div class="shadow-sm border m-2 p-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3 class="text-primary fw-bold">Purchase Requests</h3>
+                                </div>
+                                <div class="card-body p-0" style=" height: 287px; overflow-y: auto; " id="top_10_body">
+                                                <ul class="users-list clearfix" id="purchase_requests_list"></ul>
+                            </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+            </div>
+
+        </div>
+
+<!--        <div class="o_dashboards col-xs-12 col-sm-12 col-lg-12 col-md-12" style="background-color: #e1e1e1;overflow: scroll; !important; ">-->
+<!--            <div class="content-header2">-->
+<!--                <div class="container-fluid2">-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-sm-12">-->
+<!--                            <div class="dash-header2">-->
+<!--                                <h1 class="custom-h1 dashboard-h12">Dashboard </h1>-->
+<!--                                -->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </t>
+</templates>
+
+
+
