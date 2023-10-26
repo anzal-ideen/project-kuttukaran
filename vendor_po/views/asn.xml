@@ -49,7 +49,8 @@
 
                                 <field name="transfer" force_save="1" store="True" readonly="1"/>
                                 <field name="purchase_representative" force_save="1" store="True" readonly="1"/>
-                                <field name="asn_date" force_save="1" store="True" readonly="1"/>
+                                <field name="asn_date" force_save="1" store="True" readonly="0"/>
+                                <field name="invoice_upload"  widget="binary" filename="file_name"/>
 
 
                             </group>

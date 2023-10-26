@@ -96,7 +96,7 @@
                 <!--                        attrs="{'invisible': [('states','in',('draft','send','to approve','cancel'))]}"/>-->
                 <button name="button_adv_shipment_date" string="Advanced Shipment Date" type="object"
                         class="oe_highlight" groups="vendor_portal.group_vendor_portal_user"
-                        attrs="{'invisible': [('state','in',('draft','send','to approve','cancel'))]}"/>
+                        invisible="1"/>
 
                 <!--                        attrs="{'invisible': [('states','in',('draft','send','to approve','cancel'))]}"/>-->
             </xpath>

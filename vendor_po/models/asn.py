@@ -14,6 +14,7 @@ class AsNotice(models.Model):
                               )
     date_approve = fields.Datetime("PO Confirmation Date",store=True,force_save=1)
     asn_date = fields.Datetime("Adavanced Shipment Date")
+    invoice_upload = fields.Binary("Upload Invoice")
     state = fields.Selection([("draft", "Draft"), ("submit", "Submitted")], string="Status", default="draft")
 
     asn_line_ids = fields.One2many('asn.lines', 'asn_lines', string='ASN line')
@@ -44,13 +45,16 @@ class AsNotice(models.Model):
 
     def action_submit(self):
         print("helloooo")
-        if self.asn_date:
-            self.state='submit'
-            transfer = self.env['stock.picking'].search([('id', '=', self.transfer.id)])
-            for tr in transfer:
-                tr.asm_date = self.asn_date
+        if self.invoice_upload:
+            if self.asn_date:
+                self.state='submit'
+                transfer = self.env['stock.picking'].search([('id', '=', self.transfer.id)])
+                for tr in transfer:
+                    tr.asm_date = self.asn_date
+            else:
+                raise UserError("Please enter Advanced Shipment Date")
         else:
-            raise UserError("Please enter Advanced Shipment Date")
+            raise UserError("Please Upload Invoice")
 
     @api.model
     def create(self, vals):
@@ -75,4 +79,33 @@ class AsnLiness(models.Model):
 
 
 
+class InvoicePaymentInherit(models.Model):
+    _inherit = 'account.move'
 
+    def action_register_payment(self):
+        result = super(InvoicePaymentInherit, self).action_register_payment()
+        if self.move_type=='in_invoice':
+            purchase_order_id = self.invoice_line_ids.mapped('purchase_line_id').order_id
+            print(purchase_order_id.name)
+            purchase_id = self.env['purchase.order'].search([('id', '=',purchase_order_id.id)])
+            if purchase_id:
+                for purchase in purchase_id:
+                    if purchase.picking_ids:
+                        for picking in purchase.picking_ids:
+                            print(picking.name)
+                            asn_details = self.env['advanced.shipment.notice'].search([('transfer', '=',picking.id)])
+                            if asn_details:
+                                print(asn_details)
+                                if asn_details.invoice_upload:
+                                    print("passs")
+                                    return result
+                                else:
+                                    raise UserError("Please ask vendor to upload Invoice to ASN.")
+                            else:
+                                return result
+                else:
+                    return result
+            else:
+                return result
+        else:
+            return result
