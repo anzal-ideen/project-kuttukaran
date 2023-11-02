@@ -6,19 +6,20 @@ class AsNotice(models.Model):
     _name = 'advanced.shipment.notice'
 
     name = fields.Char(string='Number', required=True, copy=False, readonly=True,
-                           default=lambda self: _('New'))
-    partner_id = fields.Many2one('res.partner', string='Partner', default=lambda self: self.env.user.partner_id,readonly=True,store=True,force_save=1)
-    purchase_representative = fields.Many2one('res.users', "Purchase Representative",store=True,force_save=1)
-    po_no = fields.Many2one('purchase.order', "Purchase Order", domain="[('partner_id', '=', partner_id),]")
-    transfer = fields.Many2one('stock.picking', "Transfer No",store=True,force_save=1
-                              )
-    date_approve = fields.Datetime("PO Confirmation Date",store=True,force_save=1)
+                       default=lambda self: _('New'))
+    partner_id = fields.Many2one('res.partner', string='Partner', default=lambda self: self.env.user.partner_id,
+                                 readonly=True, store=True, force_save=1)
+    purchase_representative = fields.Many2one('res.users', "Purchase Representative", store=True, force_save=1)
+    po_no = fields.Many2one('purchase.order', "Purchase Order",
+                            domain="[('partner_id', '=', partner_id), ('state','=','purchase')]")
+    transfer = fields.Many2one('stock.picking', "Transfer No", store=True, force_save=1
+                               )
+    date_approve = fields.Datetime("PO Confirmation Date", store=True, force_save=1)
     asn_date = fields.Datetime("Adavanced Shipment Date")
-    invoice_upload = fields.Binary("Upload Invoice")
     state = fields.Selection([("draft", "Draft"), ("submit", "Submitted")], string="Status", default="draft")
+    invoice_upload = fields.Binary("Upload Invoice")
 
     asn_line_ids = fields.One2many('asn.lines', 'asn_lines', string='ASN line')
-
 
     @api.onchange('po_no')
     def _onchange_partners(self):
@@ -26,7 +27,8 @@ class AsNotice(models.Model):
             if self.po_no:
                 self.date_approve = self.po_no.date_approve
                 self.purchase_representative = self.po_no.user_id.id
-                transfers = self.env['stock.picking'].sudo().search([('origin','=',self.po_no.name),('state','=','assigned')])
+                transfers = self.env['stock.picking'].sudo().search(
+                    [('origin', '=', self.po_no.name), ('state', '=', 'assigned')])
                 for transfer in transfers:
                     self.transfer = transfer.id
                     line = []
@@ -38,10 +40,6 @@ class AsNotice(models.Model):
                         line.append((0, 0, val))
                         print(line)
                     datas.asn_line_ids = line
-
-
-
-
 
     def action_submit(self):
         print("helloooo")

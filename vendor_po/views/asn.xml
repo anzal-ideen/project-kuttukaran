@@ -44,7 +44,7 @@
                         <group>
                             <group col="2">
                                 <field name="partner_id" force_save="1" store="True" readonly="1"/>
-                                <field name="po_no" force_save="1" store="True" />
+                                <field name="po_no" force_save="1" store="True"/>
                                 <field name="date_approve" force_save="1" store="True" readonly="1"/>
 
                                 <field name="transfer" force_save="1" store="True" readonly="1"/>
@@ -99,18 +99,24 @@
             <field name="res_model">advanced.shipment.notice</field>
             <!--            <field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-
+            <field name="domain">[('partner_id.user_id.id','=',uid)]</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create"></p>
             </field>
         </record>
 
 
-        <menuitem id="root_asn" name="ASN" web_icon="vendor_po,static/icons/icons.png" groups="vendor_portal.group_vendor_portal_user"
+        <menuitem id="root_asn" name="ASN" web_icon="vendor_po,static/icons/icons_new.png" groups="vendor_portal.group_vendor_portal_user,product_purchase.group_purchase_admin"
                   sequence="40"/>
-        <menuitem id="menu_sub_asn" name="ASN" parent="root_asn"
-                  action="action_view_asn" sequence="40"/>
+<!--        <menuitem id="menu_sub_asn" name="ASN"-->
+<!--                    parent="root_asn"-->
+<!--                  action="action_view_asn" sequence="40"/>-->
+<!--        -->
+
+        <menuitem id="menu_sub_asn" name="ASN" parent="lease_management.root_product_lease"
+                  action="action_view_asn"
+                  groups="product_purchase.group_purchase_admin,lease_management.group_lease_mangement_user,vendor_portal.group_vendor_portal_user"
+                  sequence="40"/>
 
 
     </data>

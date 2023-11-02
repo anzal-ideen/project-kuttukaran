@@ -85,6 +85,14 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
+            <xpath expr="//button[@name='action_view_picking']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+
+
+
 
 
 
@@ -96,7 +104,7 @@
                 <!--                        attrs="{'invisible': [('states','in',('draft','send','to approve','cancel'))]}"/>-->
                 <button name="button_adv_shipment_date" string="Advanced Shipment Date" type="object"
                         class="oe_highlight" groups="vendor_portal.group_vendor_portal_user"
-                        invisible="1"/>
+                        attrs="{'invisible': [('state','in',('draft','send','to approve','cancel'))]}"/>
 
                 <!--                        attrs="{'invisible': [('states','in',('draft','send','to approve','cancel'))]}"/>-->
             </xpath>
@@ -145,6 +153,26 @@
                 <attribute name="create">false</attribute>
                 <attribute name="delete">false</attribute>
                 <attribute name="edit">false</attribute>
+            </xpath>
+
+
+             <xpath expr="//button[@name='button_validate']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+             <xpath expr="//button[@name='do_print_picking']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+             <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+             <xpath expr="//button[@name='action_open_label_layout']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+             <xpath expr="//button[@name='action_set_quantities_to_reservation']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
         </field>
     </record>

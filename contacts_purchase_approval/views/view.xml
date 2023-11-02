@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="approver_order_inherited_new" model="ir.ui.view">
+            <field name="name">approver.order.inherit</field>
+            <field name="model">approval.request</field>
+            <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount']" position="after">
+                    <field name="reference"/>
+                </xpath>
+                
+            </field>
+        </record>
+
+
+
+        <record id="approver_line_inherited_new" model="ir.ui.view">
+            <field name="name">approval.product.line.inherit</field>
+            <field name="model">approval.product.line</field>
+            <field name="inherit_id" ref="approvals.approval_product_line_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='quantity']" position="after">
+                    <field name="unit_price"/>
+                </xpath>
+                                
+            </field>
+        </record>
+
+
+
+        <record id="approver_line_inherited_form" model="ir.ui.view">
+            <field name="name">approval.product.line.form.inherit</field>
+            <field name="model">approval.product.line</field>
+            <field name="inherit_id" ref="approvals.approval_product_line_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='quantity']" position="after">
+                    <field name="unit_price"/>
+                </xpath>
+                                
+            </field>
+        </record>
+
+
+
+
+        <record id="purchase_order_inherited_new" model="ir.ui.view">
+            <field name="name">purchase.order.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="request_id" readonly="1"/>
+                </xpath>
+
+                <div name="button_box" position="inside">
+
+                        <button name="action_view_attachments"
+                            class="oe_stat_button"
+                            icon="fa-book"
+                            type="object"  attrs="{'invisible': [('request_id', '=', False)]}">
+                         <div class="o_stat_info">
+                                 <!-- <span class="o_stat_value">
+                                    <field name="compute_damage"/>
+                                </span> -->
+                                <span class="o_stat_text">
+                                    Documents
+                                </span>
+                        </div>
+
+                        </button>
+
+                
+                </div>
+
+
+                                
+            </field>
+        </record>
+
+                
+    </data>
+</odoo>
+
+
+
+
+
+
+
+

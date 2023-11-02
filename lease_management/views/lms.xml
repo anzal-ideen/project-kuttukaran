@@ -14,7 +14,7 @@
 
 
         <record id="view_lease_tree" model="ir.ui.view">
-            <field name="name">Product Lease</field>
+            <field name="name">Lease Agreements</field>
             <field name="model">product.lease</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
@@ -40,7 +40,7 @@
 
 
         <record id="view_lease_form" model="ir.ui.view">
-            <field name="name">Product Lease</field>
+            <field name="name">Lease Agreement</field>
             <field name="model">product.lease</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
@@ -78,10 +78,10 @@
                         <group>
                             <group col="2">
                                 <field name="requested_date"/>
-                                <field name="product_id"/>
-                                <field name="vendor_id"/>
-                                <field name="start_date"/>
-                                <field name="end_date"/>
+                                <field name="product_id" required="1"/>
+                                <field name="vendor_id" required="1"/>
+                                <field name="start_date" required="1"/>
+                                <field name="end_date" required="1"/>
                                 <field name="qty"/>
                                 <field name="price"/>
                                 <field name="is_an_approver" invisible="1"/>
@@ -94,9 +94,9 @@
                             <group col="2">
                                 <field name="user_id" readonly="1"/>
                                 <field name="company_id" readonly="1"/>
-                                <field name="approve_users" readonly="0" widget="many2many_tags"/>
-                                <field name="approved_users" readonly="0" widget="many2many_tags"/>
-                                <field name="next_approve_user" readonly="0" widget="many2many_tags"/>
+                                <field name="approve_users" readonly="0" widget="many2many_tags" invisible="1"/>
+                                <field name="approved_users" readonly="0" widget="many2many_tags" invisible="1"/>
+                                <field name="next_approve_user" readonly="0" widget="many2many_tags" invisible="1"/>
                                 <!--                                <field name="total" widget="monetary" />-->
 
 
@@ -126,7 +126,7 @@
 
                             <page string="Approvers" name="pade_apprs">
                                 <field name="approve_line" readonly="0">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" delete="0">
                                         <field name="user_id"/>
                                         <field name="company_id"/>
                                         <field name="location"/>
@@ -149,7 +149,7 @@
 
 
                             <page string="PO" name="page_recurring_po">
-                                <field name="reccuring_line" readonly="0">
+                                <field name="reccuring_line" readonly="1">
                                     <tree editable="bottom">
                                         <field name="date"/>
                                         <field name="po"/>
@@ -157,9 +157,9 @@
 
                                     </tree>
                                     <form>
-                                        <field name="date"/>
+<!--                                        <field name="date"/>-->
                                         <field name="po"/>
-                                        <field name="status"/>
+<!--                                        <field name="status"/>-->
 
                                     </form>
                                 </field>
@@ -181,8 +181,10 @@
                 </form>
             </field>
         </record>
+
+
         <record model="ir.actions.act_window" id="action_product_lease">
-            <field name="name">Product Lease</field>
+            <field name="name">Lease Agreements</field>
             <field name="res_model">product.lease</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
@@ -193,7 +195,7 @@
 
 
         <record model="ir.actions.act_window" id="action_my_product_lease">
-            <field name="name">Product Lease</field>
+            <field name="name">Lease Agreements</field>
             <field name="res_model">product.lease</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('vendor_id.user_id.id','=',uid)]</field>
@@ -202,16 +204,26 @@
             </field>
         </record>
 
-        <menuitem id="root_product_lease" name="Lease Management"
+        <menuitem id="root_product_lease" name="Contracts"
                           web_icon="lease_management,static/icons/agreement.png"/>
 
-      <menuitem id="menu_product_lease" name="Lease Request" parent="root_product_lease"
+
+
+      <menuitem id="menu_product_lease" name="Lease/Rent Agreements" parent="root_product_lease"
           action="action_product_lease" groups="lease_management.group_lease_mangement_user"
           sequence="10" />
 
+<!--        <menuitem id="menu_product_lease" name="Lease\Rent Agreementss" parent="product_purchase.menu_tenders"-->
+<!--          action="action_product_lease" groups="lease_management.group_lease_mangement_user"-->
+<!--          sequence="10" />-->
+
+<!--          <menuitem id="menu_vendors_product_lease" name="My Lease\Rent Agreements" parent="product_purchase.menu_tenders"-->
+<!--                  action="action_my_product_lease" groups="vendor_portal.group_vendor_portal_user"-->
+<!--                  sequence="10"/>-->
 
 
-        <menuitem id="menu_vendors_product_lease" name="My Lease Request" parent="root_product_lease"
+
+        <menuitem id="menu_vendors_product_lease" name="My Lease/Rent Agreements" parent="root_product_lease"
                   action="action_my_product_lease" groups="vendor_portal.group_vendor_portal_user"
                   sequence="10"/>
 
@@ -221,6 +233,40 @@
             <field name="context">{'search_default_draft': 1}</field>
 
         </record>
+
+
+
+
+        <record id="request_button_inherit" model="ir.ui.view">
+            <field name="name">product.request.inherited_new</field>
+            <field name="model">product.request</field>
+            <field name="inherit_id" ref="product_purchase.view_product_purchase_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_log_message']" position="attributes">
+                    <attribute name="string">RFI</attribute>
+                </xpath>
+            </field>
+        </record>
+
+<!--   ################# Master Module Action ##################    -->
+
+         <record model="ir.actions.act_window" id="action_product_lease_master">
+            <field name="name">Lease Agreements</field>
+            <field name="res_model">product.lease</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+             <field name="context">{
+                'create': False,
+                'edit': False
+                }
+            </field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"></p>
+            </field>
+        </record>
+
+
+<!--   ######################################     -->
 
 
     </data>

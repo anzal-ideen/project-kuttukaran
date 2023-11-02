@@ -2,7 +2,7 @@
 <odoo>
 
     <record id="group_lease_mangement_user" model="res.groups">
-        <field name="name">Lease Management User</field>
+        <field name="name">Agreements Admin</field>
     </record>
 
 </odoo>

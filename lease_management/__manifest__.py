@@ -17,11 +17,13 @@
 
   'views/lms.xml',
   'views/po_workflow.xml',
+  'views/masters.xml',
+  'views/reports.xml',
   'data/sequence.xml',
   'data/cron.xml',
 
  ],
- 'demo': [],
+ 'demo': ['demo/demo.xml'],
  'installable': True,
  'auto_install': False,
  'application' : True

@@ -8,11 +8,12 @@
  'company': 'Ideenkreise Tech Pvt Ltd',
  'website': 'https://www.ideenkreisetech.com',
  'category': 'Tools',
- 'depends': ['sale', 'base_accounting_kit', 'purchase', 'base','stock','vendor_portal'],
+ 'depends': ['sale', 'base_accounting_kit', 'purchase', 'base', 'stock', 'vendor_portal'],
  'license': 'AGPL-3',
  'data': [
      # 'security/groups.xml',
      'security/ir.model.access.csv',
+     'views/invoice_view.xml',
      'views/view.xml',
      'views/deliver_date.xml',
      'views/asn.xml',
@@ -20,7 +21,6 @@
      'data/data.xml',
 
  ],
-
 
  'demo': [],
  'installable': True,

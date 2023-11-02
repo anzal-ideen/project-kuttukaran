@@ -97,7 +97,8 @@ class ProductLease(models.Model):
                 rec.state = 'expire'
 
     def generate_auto_po(self):
-        lease_status = self.env['product.lease'].search([('state', '=', 'approve')])
+        current_date = date.today()
+        lease_status = self.env['product.lease'].search([('state', '=', 'approve'), ('end_date', '>=', current_date)])
         print("heelllll")
         order_line = []
 
@@ -124,6 +125,18 @@ class ProductLease(models.Model):
                 })
                 self.env.cr.commit()
 
+                po_vals={
+                    'po': purchase_order.id,
+                    'date':  fields.Date.today(),
+                    'status': purchase_order.state,
+                    'recurring_lease_id':lease.id
+                }
+
+                po_create = self.env['lease.recurring.po'].create(
+                    po_vals
+                )
+                self.env.cr.commit()
+
 
 
     @api.depends('state')
@@ -133,7 +146,8 @@ class ProductLease(models.Model):
             if self.product_request_id:
                 request_details = self.env['product.request'].sudo().search([('id', '=', self.product_request_id.id)], limit=1)
                 if request_details:
-                    request_details.status = 'requested'
+                    pass
+                    # request_details.status = 'requested'
                 else:
                     pass
         else:
@@ -185,7 +199,7 @@ class ProductLease(models.Model):
                                                                 ('department_id', '=', employee_data.department_id.id),
                                                                 ('type', '=', 'lease')],
                                                                limit=1)
-        if self.vendor_id:
+        if self.vendor_id.user_id:
             new_line_vals = {
                 'user_id': self.vendor_id.user_id.id,
                 'approve_order': int(1),
@@ -197,7 +211,7 @@ class ProductLease(models.Model):
             last_approve_order = None
             for users in approvers:
                 self.write({'approve_users': [(4, users.user_id.id)]})
-                if self.vendor_id:
+                if self.vendor_id.user_id:
                     approve_order = int(users.approve_order) + 1
                 else:
                     approve_order = users.approve_order
@@ -219,8 +233,8 @@ class ProductLease(models.Model):
             next_approver.user_id.id
             for next_approver in self.approve_line
             if (
-                    (self.vendor_id and next_approver.approve_order in (1, 2))
-                    or (not self.vendor_id and next_approver.approve_order == 1)
+                    (self.vendor_id.user_id and next_approver.approve_order == 1)
+                    or (not self.vendor_id.user_id and next_approver.approve_order == 1)
             )
         ]
 
@@ -272,6 +286,44 @@ class ProductLease(models.Model):
             if all_approved:
                 self.state = 'approve'
                 print("approved")
+                products = self.env['product.product'].search([('product_tmpl_id', '=', self.product_id.id)],
+                                                              limit=1)
+                # print(products)
+                for product in products:
+                    # print(product)
+                    order_line = [(0, 0, {
+                        'display_type': False,
+                        'name': products.name or '',
+                        'product_id': products.id,
+                        'price_unit': self.price,
+                        'product_qty': self.qty,
+                        'product_uom': self.product_id.uom_po_id.id,
+                    })]
+                    # print(order_line)
+                    purchase_order = self.env['purchase.order'].create({
+                        'partner_id': self.vendor_id.id,
+                        'order_line': order_line,
+                        'company_id': self.company_id.id,
+                        'user_id': self.user_id.id,
+                        'expense_type': self.product_request_id.expense_type or '',
+                        'department_id': self.product_request_id.department_id.id or '',
+                        'bill_to': self.product_request_id.bill_to.id or self.company_id.id,
+                        'ship_to': self.product_request_id.ship_to.id or self.company_id.id,
+                    })
+                    self.env.cr.commit()
+
+                    po_vals = {
+                        'po': purchase_order.id,
+                        'date': fields.Date.today(),
+                        'status': purchase_order.state,
+                        'recurring_lease_id': self.id
+                    }
+
+                    po_create = self.env['lease.recurring.po'].create(
+                        po_vals
+                    )
+                    self.env.cr.commit()
+
                 # Change the state to the desired value when all statuses are 'approve'
                 # self.write({'state': 'approved_state'})
             else:

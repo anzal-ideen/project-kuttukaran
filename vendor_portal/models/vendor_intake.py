@@ -31,8 +31,9 @@ class VendorIntake(models.Model):
     contactperson2 = fields.Char("Contact Person 2")
     msme = fields.Char("MSME Category")
     remarks = fields.Text("Remarks")
-    states = fields.Selection([("draft", "Draft"), ("approved", "Approved"), ("done", "User Generated"), ],
-                              string="Status", default="draft", tracking=True)
+    states = fields.Selection(
+        [("draft", "Draft"), ("approved", "Approved"), ("done", "User Generated"), ("cancelled", "Cancel")],
+        string="Status", default="draft", tracking=True)
 
     bank = fields.Char(string='Bank Name')
     bank_acc_no = fields.Char(string='Account No')
@@ -40,7 +41,7 @@ class VendorIntake(models.Model):
     ifsc = fields.Char(string="IFSC Code")
 
     msme_number = fields.Char(string="MSME Number")
-    vendor_category = fields.Many2one("product.category",string="Vendor Category")
+    vendor_category = fields.Many2one("product.category", string="Vendor Category")
     # company_type = fields.Char(string="Company Type")
     company_type = fields.Selection([
         ('type1', 'Companies Limited by Shares'),
@@ -64,57 +65,51 @@ class VendorIntake(models.Model):
     pan_card = fields.Binary(string='Pan Card file')
     bank_file = fields.Binary(string='Statement Copy file')
     bank_cheque_file = fields.Binary(string='Bank Cheque file')
+    vendor_approve_users = fields.Many2many(
+        'res.users',
+        'vendor_request_approve_users_rel',
+        'request_id',
+        'user_id',
+        string='Approve Users',
+    )
 
-    # vendor_bank_line_ids = fields.One2many('vendor.bank.line', 'vendor_line_id', string='Vendor Bank line')
+    vendor_approved_users = fields.Many2many(
+        'res.users',
+        'vendor_request_approved_users_rel',
+        'request_id',
+        'user_id',
+        string='Approved Users',
+    )
 
-    # def action_validate(self):
-    #
-    #     # Replace with the GST number you want to check
-    #     gst_number = "22ABCDE1234F1Z5"
-    #     key_secret = "6GILxGgI7tVgy00FzTWN75v76LO2"
-    #
-    #     # Define the URL for the GSTIN verification API
-    #     url = f" https://appyflow.in/api/verifyGST={gst_number}"
-    #
-    #     # Make a GET request to the API
-    #     response = requests.get(url)
-    #
-    #     # Check if the request was successful (status code 200)
-    #     if response.status_code == 200:
-    #         data = response.json()
-    #         if data["status_cd"] == "1":
-    #             print("GST Number is valid.")
-    #             print("Legal Name:", data["tradeNam"])
-    #             print("State Jurisdiction:", data["stj"])
-    #             print("Center Jurisdiction:", data["ctj"])
-    #         else:
-    #             print("GST Number is not valid.")
-    #     else:
-    #         print("Failed to retrieve GST details. Status code:", response.status_code)
+    approve_check = fields.Boolean(compute="_approve_check", string="Approve Check", default=False)
+    next_approve_user_id = fields.Many2many('res.users', string="Next Approve User ID")
+    user_approve_check = fields.Boolean(string="User Approve check", compute="_compute_total", default=False)
+    vendor_approve_line = fields.One2many('vendor.approve.line',
+                                          'vendor_intake_id',
+                                          string='Vendor Approve Line',
+                                          tracking=True)
 
-    # self.states='validate'
+    @api.depends("user_approve_check")
+    def _compute_total(self):
+        print('Inside user_approve_check')
+        for rec in self:
+            if self.env.user in rec.next_approve_user_id:
+                rec.user_approve_check = True
+            else:
+                rec.user_approve_check = False
+
+    def _approve_check(self):
+        self.approve_check = False
+        if self.vendor_approved_users and (self.env.user.id in [user_ids.id for user_ids in self.vendor_approved_users]):
+            self.approve_check = True
+            print("True")
+        else:
+            self.approve_check = False
+            print(self.states)
+            print("False")
 
     def action_approve(self):
         self.ref = self.env['ir.sequence'].next_by_code('vendor.intake')
-
-        # vendor_exist = self.env['res.partner'].sudo().search([
-        #     ('vat', '=', self.gst)])
-        # if vendor_exist:
-        #     raise UserError("Vendor GST is already exist")
-        # else:
-        #     user_generated = self.env['res.partner'].sudo().create({
-        #         "name": self.name,
-        #         "street": self.address1,
-        #         "street2": self.street,
-        #         "street2": self.street,
-        #         "city": self.city,
-        #         # "state_id":self.state_id.id,
-        #         "zip": self.zip,
-        #         # "country_id":self.country_id.id,
-        #         "email": self.mail_id,
-        #         "vat": self.gst,
-        #         "mobile": self.mob,
-        #     })
         self.states = 'approved'
 
     def action_done(self):
@@ -127,7 +122,6 @@ class VendorIntake(models.Model):
                 vendor_generated = self.env['res.partner'].sudo().create({
                     "name": self.name,
                     "street": self.address1,
-                    "street2": self.street,
                     "street2": self.street,
                     "city": self.city,
                     # "state_id":self.state_id.id,
@@ -155,23 +149,9 @@ class VendorIntake(models.Model):
                         'sel_groups_58_59': "58",  # Assign group 58
                         'in_group_76': True,
                     })
-
-                    # user_generated = self.env['res.users'].sudo().create({
-                    #     'name': self.name,
-                    #     'login': self.mail_id,
-                    #     'password': password,
-                    #     'partner_id': vendor_generated.id,
-                    #     # 'partner_id':
-                    #     'sel_groups_1_9_10': "1",
-                    #     # 'sel_groups_24_25_26': False,
-                    #     # 'sel_groups_30_31_32': "false",
-                    #     'sel_groups_58_59': "58",
-                    #     # 'sel_groups_13_14': False,
-                    #     'in_group_76': True,
-                    # })
             body = (
-                        "Dear Vendor,Your vendor registration has been successfully approved and your Login id is" + " " + self.mail_id + " "
-                                                                                                                                          "Password is" + " " + password)
+                    "Dear Vendor,Your vendor registration has been successfully approved and your Login id is" + " " + self.mail_id + " "
+                                                                                                                                      "Password is" + " " + password)
             vals = {
                 'subject': 'Vendor Login Credentials',
                 'body_html': body,
@@ -195,30 +175,95 @@ class VendorIntake(models.Model):
             else:
                 self.states = 'approved'
 
-        # elif self.states == "approved":
-        #     vendor_found = self.env['res.partner'].sudo().search([
-        #         ('vat', '=', self.gst)])
-        #     if vendor_found:
-        #         raise UserError("Please delete the related Vendor to countinue")
-        #     else:
-        #         self.states = 'draft'
-
         else:
             self.states = 'draft'
 
-    # @api.model
-    # def create(self, vals):
-    #     if vals.get('name', _('New')) == _('New'):
-    #         vals['name'] = self.env['ir.sequence'].next_by_code('vendor.intake') or _('New')
-    #     res = super(VendorIntake, self).create(vals)
-    #     return res
+    def action_approval(self):
+        self.write({'vendor_approved_users': [(4, self.env.user.id)]})
+        # print(self.approve_users)
+        # print(self.approved_users)
+        approve_users = self.env['vendor.approve.line'].sudo().search(
+            [('vendor_intake_id', '=', self.id), ('user_id', '=', self.env.user.id)], limit=1)
 
-# class VendorBankLines(models.Model):
-#     _name = "vendor.bank.line"
-#
-#     bank = fields.Char( string='Bank Name')
-#     bank_acc_no = fields.Char(string='Account No')
-#     branch = fields.Char(string="Branch")
-#     ifsc = fields.Char(string="IFSC Code")
-#
-#     vendor_line_id = fields.Many2one('vendor.intake', string='Bank Lines')
+        approve_users.write({
+            'status': 'accept'
+        })
+
+        if self.vendor_approved_users == self.vendor_approve_users:
+            self.states = 'approved'
+            self.action_done()
+        else:
+            approve_users = self.env['vendor.approve.line'].sudo().search([('vendor_intake_id', '=', self.id)],
+                                                                          order='approve_order asc')
+
+            user_ids = [{'u_id': user.user_id.id, 'order': user.approve_order} for user in approve_users]
+            # print(user_ids)
+
+            order_list = list(set([order_id.approve_order for order_id in approve_users]))
+            order_list.sort()
+            approve_dict = {}
+            print("order_list ", order_list)
+            for order in order_list:
+                for user in user_ids:
+                    if user['order'] == order:
+                        if order in approve_dict:
+                            approve_dict[order].append({'u_id': user['u_id'], 'order': user['order']})
+                        else:
+                            approve_dict[order] = [{'u_id': user['u_id'], 'order': user['order']}]
+
+            print("approve_dict ", approve_dict)
+
+            record_to_remove = self.env['res.users'].browse(self.env.user.id)
+            self.next_approve_user_id -= record_to_remove
+
+            if not self.next_approve_user_id:
+                for order in order_list:
+                    for order_list_users in approve_dict[order]:
+                        if self.env.user.id == order_list_users['u_id']:
+                            try:
+                                if approve_dict[order + 1]:
+                                    for users in approve_dict[order + 1]:
+                                        self.write({'next_approve_user_id': [(4, users['u_id'])]})
+                            except:
+                                print("order+1 ", order + 1)
+                                print("order_list[-1] ", order_list[-1])
+                                flag = 0
+                                for i in range(order + 1, order_list[-1] + 1):
+                                    print("i: ", i)
+                                    print("len(order_list) : ", len(order_list))
+                                    try:
+                                        if approve_dict[i]:
+                                            for users in approve_dict[i]:
+                                                print("write")
+                                                self.write({'next_approve_user_id': [(4, users['u_id'])]})
+                                                flag = 1
+                                    except:
+                                        print("pass")
+                                        pass
+                                    if flag:
+                                        break
+
+    def action_decline(self):
+        self.states = 'cancelled'
+
+
+class VendorApproveLine(models.Model):
+    _name = "vendor.approve.line"
+    _description = "Vendor Approve Line"
+
+    vendor_intake_id = fields.Many2one('vendor.intake', string='Product Request Id',
+                                       invisible=True)
+
+    user_id = fields.Many2one('res.users', string="User")
+    company_id = fields.Many2one('res.company', string="Company Id")
+    location = fields.Many2one('res.company', string="Location")
+    department_id = fields.Many2one('hr.department', string="Department")
+    emp_name = fields.Many2one('hr.employee', string="Employee")
+    designation = fields.Many2one('hr.job', string="Designation")
+    approve_order = fields.Integer(string="Order")
+    status = fields.Selection(
+        selection=[('draft', 'Draft'), ('accept', 'Accept'), ('cancel', 'Cancel'), ('delegate', 'Delegated')],
+        string='Status',
+        default='draft',
+        required=True, tracking=True
+    )

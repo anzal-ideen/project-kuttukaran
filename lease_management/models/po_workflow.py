@@ -47,32 +47,42 @@ class PurchaseApprovals(models.Model):
     def button_confirm(self):
         print("helllooo worldddd")
         if self.is_confirmed != True:
-            employee_data = self.env['hr.employee'].sudo().search([('user_id', '=', self.env.user.id)], limit=1)
-            if not employee_data.department_id:
-                raise ValidationError("Employee data is empty")
             pr_company_data = self.env['pr.company'].sudo().search([
-                ('company_id', '=', employee_data.company_id.id),
-                ('location', '=', employee_data.company_id.id),
-                ('department_id', '=',employee_data.department_id.id),
+                ('company_id', '=', self.company_id.id),
+                ('location', '=', self.location.id),
+                ('department_id', '=',self.department_id.id),
                 ('from_amount', '<=', self.amount_total),
                 ('to_amount', '>=', self.amount_total),
                 ('type','=','purchase')],
                limit=1)
             print(pr_company_data)
             if pr_company_data:
+                # self.message_post(body="Wait for PO"+" "+ self.name+" " +"Approval")
+                self.message_post(body="Wait for Vendor acknowledgement")
+                if self.partner_id.user_id:
+                    new_line_vals = {
+                        'user_id': self.partner_id.user_id.id,
+                        'approve_order': int(1),
+                    }
+                    self.approvers_line_ids |= self.env['po.approve.line'].create(new_line_vals)
+
                 for approvers in pr_company_data.pr_approve_users_id:
                     line = []
                     last_approve_order = None
                     print(approvers)
                     for users in approvers:
                         self.write({'approve_users': [(4, users.user_id.id)]})
+                        if self.partner_id.user_id:
+                            approve_order = int(users.approve_order) + 1
+                        else:
+                            approve_order = users.approve_order
                         vals = {
                             'user_id': users.user_id.id,
                             'company_id': users.company_id.id,
                             'location': users.location.id,
                             'department_id': pr_company_data.department_id.id,
                             'designation': users.designation.id,
-                            'approve_order': users.approve_order,
+                            'approve_order': approve_order,
                         }
                         line.append((0, 0, vals))
                         if last_approve_order is None or users.approve_order > last_approve_order:
@@ -96,6 +106,7 @@ class PurchaseApprovals(models.Model):
             return res
 
     def action_approval(self):
+        self.message_post(body=self.env.user.name +" "+"Approved")
         print("approvee")
         print("Hellooo users")
         print(self.env.user.id)
@@ -151,6 +162,7 @@ class PurchaseApprovals(models.Model):
 
     def action_rejected(self):
         print("rejectttt")
+        self.message_post(body=self.env.user.name + " " + "Rejected")
         self.write({
             'state': 'cancel',
             'is_confirmed': False,
@@ -159,6 +171,19 @@ class PurchaseApprovals(models.Model):
             'approved_users': [(5, 0, 0)],
             'next_approve_user': [(5, 0, 0)],
         })
+
+    def button_cancel(self):
+        res = super(PurchaseApprovals, self).button_cancel()
+        self.write({
+            'state': 'cancel',
+            'is_confirmed': False,
+            'approvers_line_ids': [(5, 0, 0)],
+            'approve_users': [(5, 0, 0)],
+            'approved_users': [(5, 0, 0)],
+            'next_approve_user': [(5, 0, 0)],
+        })
+
+        return res
 
 
 class PoApproveLines(models.Model):

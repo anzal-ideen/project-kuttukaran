@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="root_masters" name="Masters"
+                  web_icon="lease_management,static/icons/data.png"/>
+
+        <menuitem id="sub_root_admin" name="Admin" parent="root_masters"
+                  sequence="10"/>
+
+        <menuitem id="sub_root_products" name="Products" parent="root_masters"
+                  sequence="11"/>
+
+
+        <menuitem id="sub_menu_products" name="Products" parent="sub_root_products"
+                  action="stock.product_template_action_product" sequence="10"/>
+
+        <menuitem id="sub_menu_contracts" name="Contracts" parent="sub_root_products"
+                  action="product_purchase.action_view_product_contracts" sequence="11"/>
+
+        <menuitem id="sub_menu_budget" name="Budget" parent="sub_root_products"
+                  action="product_purchase.action_pr_budget" sequence="14"/>
+
+        <menuitem id="sub_menu_lease" name="Lease Agreements" parent="sub_root_products"
+                  action="lease_management.action_product_lease" sequence="12"/>
+
+         <menuitem id="sub_menu_workflow" name="Workflows" parent="sub_root_products"
+                  action="product_purchase.action_pr_company_approve_users" sequence="13"/>
+
+
+
+        <menuitem id="sub_menu_vendors" name="Vendors" parent="sub_root_admin"
+                  action="account.res_partner_action_supplier" sequence="10"/>
+
+
+        <menuitem id="sub_menu_companies" name="Companies" parent="sub_root_admin"
+                  action="base.action_res_company_form" sequence="11"/>
+
+        <menuitem id="sub_menu_users" name="Users" parent="sub_root_admin"
+                  action="base.action_res_users" sequence="12"/>
+
+        <menuitem id="sub_menu_employee" name="Employee" parent="sub_root_admin"
+          action="hr.open_view_employee_list_my" sequence="13" />
+
+
+
+
+
+
+    </data>
+</odoo>

@@ -4,6 +4,9 @@ from odoo.exceptions import UserError
 
 
 
+
+
+
 class StockDeliveryDate(models.Model):
     _inherit = 'stock.picking'
 
@@ -133,15 +136,15 @@ class PurchaseVendorUser(models.Model):
 
     @api.depends('partner_id')
     def _compute_vendor_user_id(self):
-        for user in self:
-            if user.partner_id:
-                vendor_user_id = self.env['res.users'].sudo().search([
-                ('partner_id', '=', user.partner_id.id)],limit=1)
-                print(vendor_user_id.name)
-                print(vendor_user_id.id)
-                if vendor_user_id:
-                    self.vendor_user_id = vendor_user_id.id
-                else:
-                    self.vendor_user_id = False
+        # for user in self:
+        if self.partner_id:
+            vendor_user_id = self.env['res.users'].sudo().search([
+            ('partner_id', '=', self.partner_id.id)])
+            print(vendor_user_id.name)
+            print(vendor_user_id.id)
+            if vendor_user_id:
+                self.vendor_user_id = vendor_user_id.id
             else:
                 self.vendor_user_id = False
+        else:
+            self.vendor_user_id = False
