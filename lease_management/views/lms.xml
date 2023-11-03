@@ -187,7 +187,7 @@
             <field name="name">Lease Agreements</field>
             <field name="res_model">product.lease</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('approve_users.id','=',uid)]</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create"></p>
             </field>
@@ -250,16 +250,11 @@
 
 <!--   ################# Master Module Action ##################    -->
 
-         <record model="ir.actions.act_window" id="action_product_lease_master">
+         <record model="ir.actions.act_window" id="action_master_product_lease">
             <field name="name">Lease Agreements</field>
             <field name="res_model">product.lease</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-             <field name="context">{
-                'create': False,
-                'edit': False
-                }
-            </field>
+<!--            <field name="domain">[]</field>-->
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create"></p>
             </field>
