@@ -94,7 +94,7 @@
                             <group col="2">
                                 <field name="user_id" readonly="1"/>
                                 <field name="company_id" readonly="1"/>
-                                <field name="approve_users" readonly="0" widget="many2many_tags" invisible="1"/>
+                                <field name="approve_users" readonly="0" widget="many2many_tags" invisible="0"/>
                                 <field name="approved_users" readonly="0" widget="many2many_tags" invisible="1"/>
                                 <field name="next_approve_user" readonly="0" widget="many2many_tags" invisible="1"/>
                                 <!--                                <field name="total" widget="monetary" />-->

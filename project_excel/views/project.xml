@@ -6,10 +6,24 @@
             <field name="model">project.project</field>
             <field name="inherit_id" ref="project.edit_project"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="file_upload"/>
-                    <button name="excel_upload" string="Upload" type="object" class="oe_highlight"/>
+                <!--                <xpath expr="//field[@name='tag_ids']" position="after">-->
+
+                <xpath expr="//page[@name='settings']" position="after">
+                    <page string="Task Upload" name="task_upload">
+
+                        <group>
+                            <group col="2">
+                                <field name="file_upload" widget="binary"/>
+                            </group>
+                            <group col="2">
+                                <button name="excel_upload" string="Upload" type="object" class="oe_highlight"/>
+                            </group>
+                        </group>
+
+
+                    </page>
                 </xpath>
+
             </field>
         </record>
     </data>
